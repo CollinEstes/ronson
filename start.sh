@@ -1,0 +1,2 @@
+docker run --privileged --cap-add=ALL -v /dev:/dev -v /lib/modules:/lib/modules -v collinestes/ronson
+#docker run --name ronson_debug --rm --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modules -v $PWD:/src collinestes/ronson /bin/bash

@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ronson
+  ? labels
+spec:
+  template:
+    metadata:
+      labels:
+        role: job
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: ronson
+          command:
+            - npm
+            - start
