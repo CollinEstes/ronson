@@ -24,9 +24,7 @@ if (!fs.existsSync(RECORDING_DIR)) {
 }
 
 function getDateString() {
-  return Moment()
-    .format("MMMM_Do_YYYY_h:mm_a")
-    .toString();
+  return Moment(new Date()).format("MMMM_Do_YYYY_h:mm_a")
 }
 
 function nameTrack() {
@@ -69,8 +67,7 @@ let start = () => {
 
 let setTimer = () => {
   if (time) {
-    time.clearInterval();
-    time = null;
+    clearInterval(time);
   }
 
   time = setInterval(() => {
