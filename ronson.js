@@ -11,6 +11,8 @@ const { Lame } = require("node-lame");
 const SNOWBOY_OPTIONS = require("./detection/build_detector_options");
 const RECORDING_DIR = "recording";
 
+var player = require("play-sound")((opts = {}));
+
 // MUST SUPPLY YOUR OWN SERVICE ACCOUNT CREDS
 const GOOGLE_SERVICE_ACCOUNT_CREDS = {
   client_email: process.env.CLIENT_EMAIL,
@@ -74,6 +76,7 @@ const detector = new Detector(SNOWBOY_OPTIONS);
 hotMic.stdout.pipe(detector);
 
 let start = () => {
+  player.play("./sounds/gong.mp3");
   track = nameTrack();
   tape = fs.createWriteStream(track);
   hotMic.stdout.pipe(tape);
@@ -93,6 +96,7 @@ let setTimer = () => {
 };
 
 let stop = () => {
+  player.play("./sounds/bell.mp3");
   hotMic.stdout.unpipe(tape);
   cutTrack(track);
   tape = null;
