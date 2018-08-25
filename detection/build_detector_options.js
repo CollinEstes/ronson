@@ -4,6 +4,11 @@ const VOICE_MODELS = [
     file: "/opt/app/detection/ronson.pmdl",
     hotwords: "ronson",
     sensitivity: "0.5"
+  },
+  {
+    file: "/opt/app/detection/ronson.pmdl",
+    hotwords: "ronson",
+    sensitivity: "0.6"
   }
 ];
 

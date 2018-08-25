@@ -2,20 +2,11 @@ version: 2
 jobs:
   release:
     docker:
-      - image: resin/raspberry-pi-node:8
+      - image: circleci/node:9.3.0
     steps:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - run:
-          name: install
-          command: npm install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-          paths:
-            - ./node_modules
       - run:
           name: install docker
           command: |
@@ -24,6 +15,9 @@ jobs:
             curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
             tar -xz -C /tmp -f /tmp/docker-$VER.tgz
             sudo mv /tmp/docker/* /usr/bin
+      - run:
+          name: Enabling qemu
+          command: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       - run:
           name: build docker image
           command: docker build -t collinestes/ronson .

@@ -6,6 +6,7 @@ const Microphone = require("./src/Microphone");
 const Drive = require("./src/Drive");
 
 const { Detector } = require("snowboy");
+const { Lame } = require("node-lame");
 
 const SNOWBOY_OPTIONS = require("./detection/build_detector_options");
 const RECORDING_DIR = "recording";
@@ -24,7 +25,7 @@ if (!fs.existsSync(RECORDING_DIR)) {
 }
 
 function getDateString() {
-  return Moment(new Date()).format("MMMM_Do_YYYY_h:mm_a")
+  return Moment(new Date()).format("MMMM_Do_YYYY_h:mm_a");
 }
 
 function nameTrack() {
@@ -32,17 +33,32 @@ function nameTrack() {
 }
 
 function cutTrack(filePath) {
-  const readStream = fs.createReadStream(filePath);
-  const drive = new Drive(GOOGLE_SERVICE_ACCOUNT_CREDS);
+  const encodedFilePath = filePath.split(".wav")[0] + ".mp3";
+  const encoder = new Lame({
+    output: encodedFilePath,
+    bitrate: 192
+  }).setFile(filePath);
 
-  drive.on("ready", () => {
-    drive.upload(readStream, filePath, EMAIL);
-  });
+  encoder
+    .encode()
+    .then(() => {
+      const readStream = fs.createReadStream(encodedFilePath);
+      const drive = new Drive(GOOGLE_SERVICE_ACCOUNT_CREDS);
 
-  drive.on("complete", () => {
-    // upload completed, clean up file
-    fs.unlink(filePath);
-  });
+      drive.on("ready", () => {
+        drive.upload(readStream, encodedFilePath, EMAIL);
+      });
+
+      drive.on("complete", () => {
+        // upload completed, clean up file
+        fs.unlink(filePath);
+        fs.unlink(encodedFilePath);
+      });
+    })
+    .catch(error => {
+      console.log(error);
+      process.exit(500);
+    });
 }
 
 const mic = new Microphone();
